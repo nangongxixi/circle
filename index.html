@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        html,body{
+            background: #000;;
+        }
+        div{
+            border:1px solid #fff;
+            margin: 50px;
+            float: left;
+            display: block;
+            width:400px;
+            height: 400px;
+        }
+        svg{
+            width:100%;
+            height:100%;
+        }
+        path.path_fd , path.path_bg{
+            fill: rgba(0,0,0,0);
+            stroke-dasharray: .5% .5%;
+            stroke-opacity: .6;
+        }
+    </style>
+</head>
+<body>
+    <div id="box_svg"></div>
+    <div id="box_svg2"></div>
+</body>
+<script>
+    window.onload = function(){
+
+        function CreateSvgPic(obj,config){
+            this.obj = obj;
+            this.init(config);
+            return this;
+        };
+        CreateSvgPic.prototype.createSvg = function(){
+            var NS = "http://www.w3.org/2000/svg";
+            var svg = document.createElementNS(NS, "svg");
+            return svg;
+        };
+        CreateSvgPic.prototype.initSvg = function(){
+            var str = `<defs>
+            <linearGradient id="linear" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"   stop-color="#e553b2"/>
+                <stop offset="100%" stop-color="#b53ab5"/>
+            </linearGradient>
+        </defs>
+        <defs>
+            <linearGradient id="circle" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"   stop-color="#009eea"/>
+                <stop offset="100%" stop-color="#00e3d0"/>
+            </linearGradient>
+        </defs>
+        <defs>
+            <linearGradient id="circle2" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"   stop-color="#00e3d0" stop-opacity="0.2"/>
+                <stop offset="100%" stop-color="#009eea" stop-opacity="0.2"/>
+            </linearGradient>
+        </defs>`;
+            this.svg.innerHTML = str;
+        };
+        CreateSvgPic.prototype.initConfig = function(config){
+            this.r = config.r;
+            this.r1 = config.r * .8;
+            this.x = config.x;
+            this.y = config.y;
+            this.c = 'url(#linear)';
+            this.c1 = 'url(#circle)';
+            this.c2 = 'url(#circle2)';
+        };
+
+        CreateSvgPic.prototype.appendSvg = function(){
+            this.svg.appendChild(this.createPath(this.r,this.x,this.y,0,this.c));
+            this.svg.appendChild(this.createPathInner(this.r1,this.x,this.y,0,this.c1,this.c2));
+        };
+        CreateSvgPic.prototype.initElement = function(){
+            this.oPathFd = this.svg.getElementsByClassName('path_fd')[0];
+            this.oPathInnerFd = this.svg.getElementsByClassName('path_inner_fd')[0];
+            this.oPathInnerPic = this.svg.getElementsByClassName('path_inner_pic')[0];
+        }
+
+        CreateSvgPic.prototype.setProgress = function(p){
+            var i = 0;
+            var timer = setInterval(function(){
+                if(i<p){
+                    this.setPath(this.oPathFd,this.getDPath(this.r,this.x,this.y,i));
+                    i++;
+                }else{
+                    clearInterval(timer);
+                }
+            }.bind(this),20)
+
+            return this;
+        };
+
+        CreateSvgPic.prototype.setInnerProgress = function(p){
+            var i = 0;
+            var timer = setInterval(function(){
+                if(i<p){
+                    this.setPath(this.oPathInnerFd,this.getInnerDPath(this.r1,this.x,this.y,i));
+                    this.setPath(this.oPathInnerPic,this.getInnerPicDPath(this.r1,this.x,this.y,i));
+                    i++;
+                }else{
+                    clearInterval(timer);
+                }
+            }.bind(this),20)
+
+
+            return this;
+        };
+
+        CreateSvgPic.prototype.createPath = function(r,x,y,p,c){
+            var fSvg = document.createDocumentFragment();
+            var NS = "http://www.w3.org/2000/svg";
+            var bg = document.createElementNS(NS, "path");
+            var bg_d = "m"+(x)+","+(y-r)+" a"+r+","+r+" 0 1,1 -0.1,0 z";
+            bg.setAttribute("d",bg_d);
+            bg.setAttribute("stroke","#333");
+            bg.setAttribute("stroke-width",.2*r);
+            bg.setAttribute("class","path_bg");
+
+            var fd = document.createElementNS(NS, "path");
+            var fd_x = r*Math.sin(p*2*Math.PI / 100);
+            var fd_y = r- r*Math.cos(p*2*Math.PI / 100);
+            var fd_z = p<=50?0:1;
+            var fd_d = p != 100 ? ("m"+(x)+","+(y-r)+" a"+r+","+r+" 0 "+fd_z+",1 "+fd_x+","+ fd_y) : ("m"+(x)+","+(y-r)+" a"+r+","+r+" 0 1,1 -0.1,0 z");
+            fd.setAttribute("d",fd_d);
+            fd.setAttribute("stroke",c);
+            fd.setAttribute("stroke-width",.2*r);
+            fd.setAttribute("class","path_fd");
+
+            fSvg.appendChild(bg);
+            fSvg.appendChild(fd);
+
+            return fSvg;
+        };
+
+        CreateSvgPic.prototype.setPath = function(oPath,dPath){
+            oPath.setAttribute("d",dPath);
+        };
+
+        CreateSvgPic.prototype.getDPath = function(r,x,y,p){
+            var fd_x = r*Math.sin(p*2*Math.PI / 100);
+            var fd_y = r- r*Math.cos(p*2*Math.PI / 100);
+            var fd_z = p<=50?0:1;
+            var fd_d = p != 100 ? ("m"+(x)+","+(y-r)+" a"+r+","+r+" 0 "+fd_z+",1 "+fd_x+","+ fd_y) : ("m"+(x)+","+(y-r)+" a"+r+","+r+" 0 1,1 -0.1,0 z");
+
+            return fd_d;
+        }
+
+        CreateSvgPic.prototype.getInnerDPath = function(r,x,y,p){
+            var fd_x = r*Math.sin(p*2*Math.PI / 100);
+            var fd_y = r- r*Math.cos(p*2*Math.PI / 100);
+            var fd_z = p<=50?0:1;
+            var fd_d = p != 100 ? ("m"+(x)+","+(y-r)+" a"+r+","+r+" 0 "+fd_z+",1 "+fd_x+","+ fd_y) : ("m"+(x)+","+(y-r)+" a"+r+","+r+" 0 1,1 -0.1,0 z");
+
+            return fd_d;
+        }
+
+        CreateSvgPic.prototype.getInnerPicDPath = function(r,x,y,p){
+            var fd_x = r*Math.sin(p*2*Math.PI / 100);
+            var fd_y = r- r*Math.cos(p*2*Math.PI / 100);
+            var fd_z = p<=50?0:1;
+            var fd_d = p != 100 ? ("m"+(x)+","+(y)+"l0,"+(-r)+" a"+r+","+r+" 0 "+fd_z+",1 "+fd_x+","+ fd_y) : ("m"+(x)+","+(y-r)+" a"+r+","+r+" 0 1,1 -0.1,0 z");
+
+            return fd_d;
+        }
+
+        CreateSvgPic.prototype.createPathInner = function(r,x,y,p,c1,c2){
+            var fSvg = document.createDocumentFragment();
+            var NS = "http://www.w3.org/2000/svg";
+            var bg = document.createElementNS(NS, "path");
+            var bg_d = "m"+(x)+","+(y-r)+" a"+r+","+r+" 0 1,1 -0.1,0 z";
+            bg.setAttribute("d",bg_d);
+            bg.setAttribute("stroke","#333");
+            bg.setAttribute("stroke-width",.1*r);
+            bg.setAttribute("class","path_inner_bg");
+
+            var fd = document.createElementNS(NS, "path");
+            var fd_x = r*Math.sin(p*2*Math.PI / 100);
+            var fd_y = r- r*Math.cos(p*2*Math.PI / 100);
+            var fd_z = p<=50?0:1;
+            var fd_d = p != 100 ? ("m"+(x)+","+(y-r)+" a"+r+","+r+" 0 "+fd_z+",1 "+fd_x+","+ fd_y) : ("m"+(x)+","+(y-r)+" a"+r+","+r+" 0 1,1 -0.1,0 z");
+            fd.setAttribute("d",fd_d);
+            fd.setAttribute("stroke",c1);
+            fd.setAttribute("fill","rgba(0,0,0,0)");
+            fd.setAttribute("stroke-width",.1*r);
+            fd.setAttribute("class","path_inner_fd");
+
+            var fd_pic = document.createElementNS(NS, "path");
+            var fd_d1 = p != 100 ? ("m"+(x)+","+(y-r)+" a"+r+","+r+" 0 "+fd_z+",1 "+fd_x+","+ fd_y) : ("m"+(x)+","+(y-r)+" a"+r+","+r+" 0 1,1 -0.1,0 z");
+            fd_pic.setAttribute("d",fd_d1);
+            fd_pic.setAttribute("stroke","rgba(0,0,0,0)");
+            fd_pic.setAttribute("fill",c2);
+            fd_pic.setAttribute("stroke-width",.1*r);
+            fd_pic.setAttribute("class","path_inner_pic");
+
+            fSvg.appendChild(bg);
+            fSvg.appendChild(fd);
+            fSvg.appendChild(fd_pic);
+
+            return fSvg;
+        }
+
+        CreateSvgPic.prototype.init = function(config){
+            this.svg = this.createSvg();
+            this.initSvg();
+            this.initConfig(config);
+            this.appendSvg();
+            this.initElement();
+            this.obj.appendChild(this.svg);
+        };
+
+
+        new CreateSvgPic(document.getElementById("box_svg"),{
+            r : 80,
+            x : 200,
+            y : 200,
+        }).setProgress(70).setInnerProgress(60);
+
+        new CreateSvgPic(document.getElementById("box_svg2"),{
+            r : 80,
+            x : 200,
+            y : 200,
+        }).setProgress(40).setInnerProgress(33);
+    }
+</script>
+</html>
