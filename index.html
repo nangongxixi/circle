@@ -9,11 +9,11 @@
         }
         div{
             border:1px solid #fff;
-            margin: 50px;
+            margin: 10px;
             float: left;
             display: block;
-            width:400px;
-            height: 400px;
+            width:300px;
+            height: 300px;
         }
         svg{
             width:100%;
@@ -29,6 +29,18 @@
 <body>
     <div id="box_svg"></div>
     <div id="box_svg2"></div>
+    <div id="box_svg3"></div>
+    <div id="box_svg4"></div>
+
+    <div id="box_svg5"></div>
+    <div id="box_svg6"></div>
+    <div id="box_svg7"></div>
+    <div id="box_svg8"></div>
+
+    <div id="box_svg9"></div>
+    <div id="box_svg10"></div>
+    <div id="box_svg11"></div>
+    <div id="box_svg12"></div>
 </body>
 <script>
     window.onload = function(){
@@ -72,8 +84,10 @@
             this.c = 'url(#linear)';
             this.c1 = 'url(#circle)';
             this.c2 = 'url(#circle2)';
-        };
 
+            this.progress = 0;
+            this.innerProgress = 0;
+        };
         CreateSvgPic.prototype.appendSvg = function(){
             this.svg.appendChild(this.createPath(this.r,this.x,this.y,0,this.c));
             this.svg.appendChild(this.createPathInner(this.r1,this.x,this.y,0,this.c1,this.c2));
@@ -83,37 +97,43 @@
             this.oPathInnerFd = this.svg.getElementsByClassName('path_inner_fd')[0];
             this.oPathInnerPic = this.svg.getElementsByClassName('path_inner_pic')[0];
         }
-
         CreateSvgPic.prototype.setProgress = function(p){
-            var i = 0;
+            var i = this.progress;
             var timer = setInterval(function(){
-                if(i<p){
+                if(i > p){
+                    this.setPath(this.oPathFd,this.getDPath(this.r,this.x,this.y,i));
+                    i--;
+                }else if(i<p){
                     this.setPath(this.oPathFd,this.getDPath(this.r,this.x,this.y,i));
                     i++;
                 }else{
+                    this.progress = p;
                     clearInterval(timer);
                 }
-            }.bind(this),20)
+            }.bind(this),20);
 
             return this;
         };
-
         CreateSvgPic.prototype.setInnerProgress = function(p){
-            var i = 0;
+            var i = this.innerProgress;
             var timer = setInterval(function(){
-                if(i<p){
+                if(i > p){
+                    this.setPath(this.oPathInnerFd,this.getInnerDPath(this.r1,this.x,this.y,i));
+                    this.setPath(this.oPathInnerPic,this.getInnerPicDPath(this.r1,this.x,this.y,i));
+                    i--;
+                }else if(i < p){
                     this.setPath(this.oPathInnerFd,this.getInnerDPath(this.r1,this.x,this.y,i));
                     this.setPath(this.oPathInnerPic,this.getInnerPicDPath(this.r1,this.x,this.y,i));
                     i++;
                 }else{
                     clearInterval(timer);
+                    this.innerProgress = p;
                 }
             }.bind(this),20)
 
 
             return this;
         };
-
         CreateSvgPic.prototype.createPath = function(r,x,y,p,c){
             var fSvg = document.createDocumentFragment();
             var NS = "http://www.w3.org/2000/svg";
@@ -139,11 +159,9 @@
 
             return fSvg;
         };
-
         CreateSvgPic.prototype.setPath = function(oPath,dPath){
             oPath.setAttribute("d",dPath);
         };
-
         CreateSvgPic.prototype.getDPath = function(r,x,y,p){
             var fd_x = r*Math.sin(p*2*Math.PI / 100);
             var fd_y = r- r*Math.cos(p*2*Math.PI / 100);
@@ -152,7 +170,6 @@
 
             return fd_d;
         }
-
         CreateSvgPic.prototype.getInnerDPath = function(r,x,y,p){
             var fd_x = r*Math.sin(p*2*Math.PI / 100);
             var fd_y = r- r*Math.cos(p*2*Math.PI / 100);
@@ -161,7 +178,6 @@
 
             return fd_d;
         }
-
         CreateSvgPic.prototype.getInnerPicDPath = function(r,x,y,p){
             var fd_x = r*Math.sin(p*2*Math.PI / 100);
             var fd_y = r- r*Math.cos(p*2*Math.PI / 100);
@@ -170,7 +186,6 @@
 
             return fd_d;
         }
-
         CreateSvgPic.prototype.createPathInner = function(r,x,y,p,c1,c2){
             var fSvg = document.createDocumentFragment();
             var NS = "http://www.w3.org/2000/svg";
@@ -206,7 +221,6 @@
 
             return fSvg;
         }
-
         CreateSvgPic.prototype.init = function(config){
             this.svg = this.createSvg();
             this.initSvg();
@@ -216,18 +230,301 @@
             this.obj.appendChild(this.svg);
         };
 
-
-        new CreateSvgPic(document.getElementById("box_svg"),{
+        var svg1 = new CreateSvgPic(document.getElementById("box_svg"),{
             r : 80,
-            x : 200,
-            y : 200,
+            x : 150,
+            y : 150,
         }).setProgress(70).setInnerProgress(60);
 
-        new CreateSvgPic(document.getElementById("box_svg2"),{
+        var svg2 = new CreateSvgPic(document.getElementById("box_svg2"),{
             r : 80,
-            x : 200,
-            y : 200,
+            x : 150,
+            y : 150,
         }).setProgress(40).setInnerProgress(33);
+
+        var svg3 = new CreateSvgPic(document.getElementById("box_svg3"),{
+            r : 100,
+            x : 150,
+            y : 150,
+        }).setProgress(99).setInnerProgress(40);
+
+        var svg4 = new CreateSvgPic(document.getElementById("box_svg4"),{
+            r : 60,
+            x : 150,
+            y : 150,
+        }).setProgress(19).setInnerProgress(88);
+
+
+        setInterval(function(){
+            svg1.setProgress(parseInt(Math.random()*100)).setInnerProgress(parseInt(Math.random()*100));
+            svg2.setProgress(parseInt(Math.random()*100)).setInnerProgress(parseInt(Math.random()*100));
+            svg3.setProgress(parseInt(Math.random()*100)).setInnerProgress(parseInt(Math.random()*100));
+            svg4.setProgress(parseInt(Math.random()*100)).setInnerProgress(parseInt(Math.random()*100));
+        },2000);
+
+
+
+        function CreateSvgSinglePic(obj,config){
+            this.obj = obj;
+            this.init(config);
+            return this;
+        }
+        CreateSvgSinglePic.prototype.init = function(config){
+            this.svg = this.createSvg();
+            this.initSvg();
+            this.initConfig(config);
+            this.appendSvg();
+            this.initElement();
+            this.obj.appendChild(this.svg);
+        };
+        CreateSvgSinglePic.prototype.createSvg = function(){
+            var NS = "http://www.w3.org/2000/svg";
+            var svg = document.createElementNS(NS, "svg");
+            return svg;
+        };
+        CreateSvgSinglePic.prototype.initSvg = function(){
+            var str = `<defs>
+            <linearGradient id="circle" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"   stop-color="#009eea"/>
+                <stop offset="100%" stop-color="#00e3d0"/>
+            </linearGradient>
+        </defs>`;
+            this.svg.innerHTML = str;
+        };
+        CreateSvgSinglePic.prototype.initConfig = function(config){
+            this.r = config.r;
+            this.x = config.x;
+            this.y = config.y;
+            this.c = 'url(#circle)';
+            this.progress = 0;
+        };
+        CreateSvgSinglePic.prototype.appendSvg = function(){
+            this.svg.appendChild(this.createPath(this.r,this.x,this.y,0,this.c));
+        };
+        CreateSvgSinglePic.prototype.createPath = function(r,x,y,p,c){
+            var fSvg = document.createDocumentFragment();
+            var NS = "http://www.w3.org/2000/svg";
+            var bg = document.createElementNS(NS, "path");
+            var bg_d = "m"+(x)+","+(y-r)+" a"+r+","+r+" 0 1,1 -0.1,0 z";
+            bg.setAttribute("d",bg_d);
+            bg.setAttribute("stroke","#333");
+            bg.setAttribute("stroke-width",.2*r);
+            bg.setAttribute("class","path_inner_bg");
+
+            var fd = document.createElementNS(NS, "path");
+            var fd_x = r*Math.sin(p*2*Math.PI / 100);
+            var fd_y = r- r*Math.cos(p*2*Math.PI / 100);
+            var fd_z = p<=50?0:1;
+            var fd_d = p != 100 ? ("m"+(x)+","+(y-r)+" a"+r+","+r+" 0 "+fd_z+",1 "+fd_x+","+ fd_y) : ("m"+(x)+","+(y-r)+" a"+r+","+r+" 0 1,1 -0.1,0 z");
+            fd.setAttribute("d",fd_d);
+            fd.setAttribute("stroke",c);
+            fd.setAttribute("fill","rgba(0,0,0,0)");
+            fd.setAttribute("stroke-width",.2*r);
+            fd.setAttribute("class","path_single_fd");
+
+            var text = document.createElementNS(NS, "text");
+            text.setAttribute("class","path_single_text");
+            text.setAttribute("x",x-r/2);
+            text.setAttribute("y",y+r/4);8
+            text.setAttribute("textLength",r*2/3);
+            text.setAttribute("font-size",r/2);
+            text.setAttribute("fill",c);
+            text.setAttribute("stroke-width",3);
+            text.setAttribute("stroke",c);
+            text.setAttribute("lengthAdjust","spacing");
+
+            var text_util = document.createElementNS(NS, "text");
+            text_util.setAttribute("class","path_single_text");
+            text_util.setAttribute("x",x+r/6);
+            text_util.setAttribute("y",y+r/4);
+            text_util.setAttribute("textLength",r);
+            text_util.setAttribute("font-size",r/4);
+            text_util.setAttribute("fill","#a9aadd");
+            text_util.setAttribute("lengthAdjust","spacing");
+            text_util.innerHTML = "%";
+
+            fSvg.appendChild(bg);
+            fSvg.appendChild(fd);
+            fSvg.appendChild(text);
+            fSvg.appendChild(text_util);
+
+            return fSvg;
+        };
+        CreateSvgSinglePic.prototype.initElement = function(){
+            this.oPathFd = this.svg.getElementsByClassName('path_single_fd')[0];
+            this.oPathText = this.svg.getElementsByClassName('path_single_text')[0];
+        };
+        CreateSvgSinglePic.prototype.setProgress = function(p){
+            var i = this.progress;
+            var timer = setInterval(function(){
+                if(i > p){
+                    this.setPath(this.oPathFd,this.getDPath(this.r,this.x,this.y,i));
+                    this.setText(this.oPathText,i);
+                    i--;
+                }else if(i<p){
+                    this.setPath(this.oPathFd,this.getDPath(this.r,this.x,this.y,i));
+                    this.setText(this.oPathText,i);
+                    i++;
+                }else{
+                    this.progress = p;
+                    clearInterval(timer);
+                }
+            }.bind(this),20);
+
+            return this;
+        };
+        CreateSvgSinglePic.prototype.setPath = function(oPath,dPath){
+            oPath.setAttribute("d",dPath);
+        };
+        CreateSvgSinglePic.prototype.getDPath = function(r,x,y,p){
+            var fd_x = r*Math.sin(p*2*Math.PI / 100);
+            var fd_y = r- r*Math.cos(p*2*Math.PI / 100);
+            var fd_z = p<=50?0:1;
+            var fd_d = p != 100 ? ("m"+(x)+","+(y-r)+" a"+r+","+r+" 0 "+fd_z+",1 "+fd_x+","+ fd_y) : ("m"+(x)+","+(y-r)+" a"+r+","+r+" 0 1,1 -0.1,0 z");
+
+            return fd_d;
+        }
+        CreateSvgSinglePic.prototype.setText = function(oText,text){
+            oText.innerHTML = text;
+        };
+
+        var svg5 = new CreateSvgSinglePic(document.getElementById("box_svg5"),{
+            r : 80,
+            x : 150,
+            y : 150,
+        }).setProgress(70);
+
+        var svg6 = new CreateSvgSinglePic(document.getElementById("box_svg6"),{
+            r : 80,
+            x : 150,
+            y : 150,
+        }).setProgress(70);
+
+        var svg7 = new CreateSvgSinglePic(document.getElementById("box_svg7"),{
+            r : 100,
+            x : 150,
+            y : 150,
+        }).setProgress(70);
+
+        var svg8 = new CreateSvgSinglePic(document.getElementById("box_svg8"),{
+            r : 60,
+            x : 150,
+            y : 150,
+        }).setProgress(70);
+
+        setInterval(function(){
+            svg5.setProgress(parseInt(Math.random()*100));
+            svg6.setProgress(parseInt(Math.random()*100));
+            svg7.setProgress(parseInt(Math.random()*100));
+            svg8.setProgress(parseInt(Math.random()*100));
+        },2000);
+
+
+        function CreateSvgClosePic(obj,config){
+            this.obj = obj;
+            this.init(config);
+            return this;
+        }
+        CreateSvgClosePic.prototype.init = function(config){
+            this.svg = this.createSvg();
+            this.initConfig(config);
+            this.initSvg();
+            this.appendSvg();
+//            this.initElement();
+            this.obj.appendChild(this.svg);
+        };
+        CreateSvgClosePic.prototype.createSvg = function(){
+            var NS = "http://www.w3.org/2000/svg";
+            var svg = document.createElementNS(NS, "svg");
+            return svg;
+        };
+        CreateSvgClosePic.prototype.initConfig = function(config){
+            this.r = config.r;
+            this.x = config.x;
+            this.y = config.y;
+            this.data = config.data;
+            this.len = this.data.length;
+            this.count = 0;
+            this.dataX = 0;
+            this.dataY = 0;
+
+            for(var i =0;i<this.len;i++){
+                this.count = this.count + this.data[i].amount;
+            }
+
+            this.progress = 0;
+        };
+        CreateSvgClosePic.prototype.initSvg = function(){
+            var str = '';
+            var id,startColor,stopColor;
+            for(var i=0;i<this.len;i++){
+                id = 'color'+i;
+                startColor = this.data[i].color[0];
+                stopColor = this.data[i].color[1];
+                str = str + `<defs>
+                    <linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%"   stop-color="${startColor}"/>
+                        <stop offset="100%" stop-color="${stopColor}"/>
+                    </linearGradient>
+                </defs>`
+            }
+            this.svg.innerHTML = str;
+        };
+        CreateSvgClosePic.prototype.appendSvg = function(){
+            this.svg.appendChild(this.createPath(this.r,this.x,this.y,this.data));
+        };
+        CreateSvgClosePic.prototype.createPath = function(r,x,y,data){
+            var fSvg = document.createDocumentFragment();
+
+            var NS = "http://www.w3.org/2000/svg";
+            var bg = document.createElementNS(NS, "path");
+            var bg_d = "m"+(x)+","+(y-r)+" a"+r+","+r+" 0 1,1 -0.1,0 z";
+            bg.setAttribute("d",bg_d);
+            bg.setAttribute("stroke","#0c1c24");
+            bg.setAttribute("stroke-width",.2*r);
+            bg.setAttribute("class","path_inner_bg");
+            fSvg.appendChild(bg);
+
+            var pro = 0,oPath,path_x,path_y,path_z,path_d;
+            for(var i=0;i<data.length;i++){
+                pro = data[0].amount/this.count * 100;
+                oPath = document.createElementNS(NS, "path");
+                path_x = r*Math.sin(pro*2*Math.PI / 100);
+                path_y = r- r*Math.cos(pro*2*Math.PI / 100);
+                path_z = pro<=50?0:1;
+                path_d = "m"+(x+this.dataX)+","+(y-r+this.dataY)+" a"+r+","+r+" 0 "+path_z+",1 "+path_x+","+ path_y;
+                oPath.setAttribute("stroke","url(#color"+i+")");
+                oPath.setAttribute("d",path_d);
+                oPath.setAttribute("stroke-width",.2*r);
+                oPath.setAttribute("class","path_close_fd");
+
+                fSvg.appendChild(oPath);
+            }
+
+            return fSvg;
+        };
+
+        var svg9 = new CreateSvgClosePic(document.getElementById("box_svg9"),{
+            r : 80,
+            x : 150,
+            y : 150,
+            data : [
+                {
+                    label: '广州机房',
+                    color: ["#c72951","#fc7397"],
+                    amount: 200
+                },{
+                    label: '杭州机房',
+                    color: ["#00b43e","#008807"],
+                    amount: 300
+                },{
+                    label: '北京机房',
+                    color: ["#00c7d7","#00b0e4"],
+                    amount: 500
+                }
+            ]
+        })
+
     }
 </script>
 </html>
